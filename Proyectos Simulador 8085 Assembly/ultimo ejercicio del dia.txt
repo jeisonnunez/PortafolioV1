@@ -1,0 +1,48 @@
+;programa que dibuja un punto en las coordenadas X,Y
+;
+;........................................................
+.data A000h
+video:
+
+.data 1000h
+color: 	DB 77h
+amarillo:	DB 77h
+rojo:		DB 55h
+azul:		DB 11h
+
+.org 0100h
+		MVI D,05H
+		MVI E,03h
+		LXI H,azul
+lineaH:	CALL punto
+		INR D
+		MOV A,D
+		CPI 0Fh	
+		JNZ lineaH
+		HLT
+;.........................................................
+;rutina que imprime un punto en la coordenada D-X E-Y
+;.........................................................
+punto:	PUSH PSW
+		PUSH B 
+		PUSH D
+		LXI H, video
+		MVI B,0
+		MVI C,50h
+		DCR E
+continua:	MOV A,E
+		CPI 0
+		JZ termina
+		DCR E
+		DAD B
+		JMP continua
+termina:	DCR D
+		MOV C,D
+		DAD B
+		XCHG
+		LXI H,color
+		MOV M,A
+		POP D
+		POP B
+		POP PSW
+		RET

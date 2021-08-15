@@ -1,0 +1,64 @@
+;Area de datos
+;.............................................................
+.data 1000h
+letra:	db 00h,77h,00,00
+		db 07h,77h,70h,00
+		db 77h,00,77h, 00
+		db 77h,00,77h,00
+		db 77h,
+		db 77h
+		db
+		db
+		
+
+.data A000h
+video:
+
+.org 1000h
+	LXI H,video		; direccion de area de video
+	PUSH H
+	LXI H, letra	;direccion de la letra
+	MVI E,08h		; cantidad de lineas que contiene la letra
+	
+L1:	MOV A,M		; primer byte de letra
+	INX H			; se intercambia cada 4 byte
+	XTHL
+	MOV M,A
+	INX H
+	XTHL
+
+	MOV A,M
+	INX H
+	XTHL
+	MOV M,A
+	INX H
+	XTHL
+
+	MOV A,M
+	INX H
+	XTHL
+	MOV M,A
+	INX H
+	XTHL
+
+
+	MOV 	A,M
+	INX H
+	XTHL
+	MOV M,A
+	INX H
+	XTHL
+
+	MOV A,M
+	INX H
+	XTHL
+	MOV M,A
+
+	MVI B,0		;se desplaza a la siguiente linea
+	MVI C. 4Dh		;9D queda bien con un espacio letra mas grande
+ 	DAD B
+	XTHL
+	DCR E
+	JNZ L1		; repite 8 veces
+	POP H
+	HLT

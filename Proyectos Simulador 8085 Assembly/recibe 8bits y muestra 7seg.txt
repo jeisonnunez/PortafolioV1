@@ -1,0 +1,133 @@
+Programa que muestra en el display 7 segmentos los 0 y 1 que van ingresando, por orden (8bits)
+
+
+.DATA 1000H
+cod7sg: DB 77H, 44H, 3EH, 6EH, 4DH, 6BH, 79H, 46H, 7FH, 4FH
+
+.ORG 100H
+iniciar: 	MVI A, 08H			;permite solo interrupcion 7,5
+		SIM
+		EI
+		JMP iniciar
+		HLT
+
+;-----------------------------------------------
+;Rutina que recybe un byte y lo muestra en 7seg
+;-----------------------------------------------
+recibirByte:RIM				;leo puerto serial
+		RAL				;rota a la izquierda con acarreo, puerto serial= bit 7 del acum
+		JC hayUno			;si hay acarreo, quiere decir que llego un uno
+		MVI B, 00H			;bit = 0
+		JMP salto3			;salta
+hayUno:	MVI B, 01H			;bit= 1
+salto3:	MOV A, B			;mueve al acum
+		CALL cnvrt7s
+		MOV A, C			;contador que indica el puerto en donde se mostrara
+		CPI 01H
+		JZ puerto0
+		CPI 02H
+		JZ puerto1
+		CPI 03H
+		JZ puerto2
+		CPI 04H
+		JZ puerto3
+		CPI 05H
+		JZ puerto4
+		CPI 06H
+		JZ puerto5
+		CPI 07H
+		JZ puerto6
+		CPI 08H
+		JZ puerto7
+		JMP salto5
+
+puerto0:	MOV A, B
+		OUT 00H
+		JMP salto5
+
+puerto1:	MOV A, B
+		OUT 01H
+		JMP salto5
+
+puerto2:	MOV A, B
+		OUT 02H
+		JMP salto5
+
+puerto3:	MOV A, B
+		OUT 03H
+		JMP salto5
+
+puerto4:	MOV A, B
+		OUT 04H
+		JMP salto5
+
+puerto5:	MOV A, B
+		OUT 05H
+		JMP salto5
+
+puerto6:	MOV A, B
+		OUT 06H
+		JMP salto5
+
+puerto7:	MOV A, B
+		OUT 07H
+		JMP salto5
+
+salto5:	DCR C
+		RET
+
+;-----------------------------
+;Rutina que limpia los puertos
+;-----------------------------
+limpiar:	PUSH PSW
+		MVI A, 00H
+		OUT 00H
+		OUT 01H
+		OUT 02H
+		OUT 03H
+		OUT 04H
+		OUT 05H
+		OUT 06H
+		OUT 07H
+		POP PSW
+		RET
+			
+
+;----------------------------
+;Inicio de rutina conversión
+;A: Dato de entrada
+;B: Dato de salida
+;----------------------------
+
+cnvrt7s: 
+	PUSH H; guarda en la pila cualquier valor que tenga HL
+	LXI H, cod7sg; graba la dirección de cod7sg en HL
+	ADD L
+	MOV L, A
+	MOV B, M; mueve lo que hay en M a B, M tiene la direccion de HL
+	POP H
+	RET	
+
+;------------------
+;interrupcion 7,5
+;------------------
+.ORG 003CH
+		CALL limpiar
+		MVI C, 08H			;cantidad de bit a recibir
+recibir:	MVI A, 0EH			;permitir solo interrupcion 5,5
+		SIM				
+		EI
+		MOV A, C
+		CPI 00H
+		JNZ recibir
+		RET
+
+;-----------------
+;interrupcion 5,5
+;-----------------
+.ORG 002CH
+		CALL recibirByte
+		RET
+
+
+

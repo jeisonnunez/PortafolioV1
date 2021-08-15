@@ -1,0 +1,35 @@
+.data 1000h
+
+codigos: DB 77h, 44h, 3Eh, 6Eh, 4Dh,6Bh, 79h, 46h, 7Fh, 4Fh
+
+
+.org 0100h
+
+inicio: 	IN 00h  ; numero por teclado
+		CPI 00h; verifica si hay dato
+		JZ inicio; salta a inicio
+		SUI 30h ; resto para obtener digito entre 0 y 9
+		CALL Convert7seg; convierte el digito decimal en codigo en 7 segmentos, Entrada A, Retorno A
+		OUT 00h		
+		JMP inicio
+		HLT
+
+
+
+;---------------------------------------------
+
+;Entrada: Registro A
+;Salida: Registro A
+;Usa etiqueta codigo
+;Modifica registro HL
+;-------------------------
+
+Convert7seg: 
+
+PUSH H; 
+LXI H, codigos;
+ADD L;
+MOV L,A;
+MOV A,M;
+POP H;
+RET;

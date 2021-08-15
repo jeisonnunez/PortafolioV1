@@ -1,0 +1,20 @@
+PROGRAMA QUE ENVIA 8BITS
+
+.DATA 1000H
+dato:	DB AAH			;dato de prueba 10101010
+
+.ORG 100H
+		LDA dato		;cargar dato
+		MVI C, 08H		;8 bits a transmitir
+siguiente:	RAR			;rotar
+		MOV B, A 		;guarda en B para no poerder 
+		JC enviar1
+		MVI A, 40H
+		JMP send
+enviar1:	MVI A, C0H
+send:		SIM
+		MOV A, B
+		DCR C		
+		JNZ siguiente
+		HLT
+		

@@ -1,0 +1,5 @@
+Athlon3.2
+
+"",Sproveedor.FP_RIF, Sproveedor.FP_NIT, Sproveedor.FP_DESCRIPCION, 
+Scuentasxpagar.FCP_NUMERO, Scuentasxpagar.FCP_FECHAEMISION, "", "", 
+Scuentasxpagar.FCP_BASEIMPONIBLE,  Sproveedor.FCP_MTOIMPUESTO1

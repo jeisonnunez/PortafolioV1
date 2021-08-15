@@ -1,0 +1,146 @@
+;--------------------------------------------------
+; Programa: Juego Adivina un Numero
+; Descripcion: Manejo de interrupciones en 8085, 
+; Rest 7.5 cuenta de 0 a 9
+; Rest 5.5 lee el teclado
+; Si valor de cuenta es igual numero leido del teclado
+; el programa termina, sino sigue jugando hasta
+; perder los intentos. Los intentos restantes son mostrados 
+; en display 7 segmentos. Se usa puertos de led para indicar si
+; ha ganado o no
+; Autor: Gustavo Jimenez
+; Fecha: 11-10-2017
+; Universidad Alejandro de Humboldt
+;--------------------------------------------------
+
+
+;--------------------------------------------------
+; Variables y Datos
+;--------------------------------------------------
+.data 1000h
+estado:	DB 00h	; 0 continua jugando, 1 gano 2 perdio	
+cuenta:	DB 00h	; se usa para llevar la cuenta
+codigos:	DB 77h, 44h, 3Eh, 6Eh, 4Dh, 6Bh, 79h, 46h, 7Fh, 4Fh
+		; valores usados para convertir un digito decimal a 7 seg
+intentos:	DB 03h	; cantidad de intentos antes de perder el juego
+
+;-----------------------------------------------------------------------
+; Programa Principal
+;-----------------------------------------------------------------------
+.org 0100h
+		
+reiniciar:	CALL Inicializar	; cargamos el valor inicial de intentos
+esperar:	IN 01h		; interrupores
+		CPI 00h		;
+		JZ esperar
+inicio:	EI			; habilitamos interrupciones
+		LDA estado		; cargamos el estado del juego
+		CPI 00h		; comparamos con 0
+		JZ inicio		; repetimos mientras no haya ganado o perdido
+		OUT 09h		; mostramos valor en puerto 09, si es 1 gano si es 2 perdio
+espera2:	IN 02h		;
+		CPI 00h
+		JZ espera2
+		CPI 01h
+		MVI A, 03h
+		STA intentos
+		MVI A, 0
+		STA estado
+		JZ reiniciar
+		HLT			; fin de programa principal
+
+
+;----------------------------------------------------------------------
+; Rutina: Inicializar
+; 
+;----------------------------------------------------------------------
+Inicializar:
+		PUSH PSW
+		MVI A,00h
+		OUT 00h
+		OUT 01h
+		OUT 02h
+		OUT 03h
+		OUT 04h
+		OUT 05h
+		OUT 06h
+		OUT 07h
+		OUT 09h
+		LDA intentos
+		CALL Convert7
+		OUT 07h
+		POP PSW
+		RET
+;----------------------------------------------------------------------
+; Rutina: Contar
+; cuenta de 0 a 9
+;----------------------------------------------------------------------
+Contar:	PUSH PSW		; salvamos el valor de A y las banderas
+		LDA cuenta		; cargamos valor actual de la cuenta
+		INR A			; incrementramos en 1
+		CPI 0Ah		; comparamos con 10
+		JNZ salto1		; si ha llegado a 10
+		MVI A,00h		; cambiamos a 0, sino seguimos contando
+salto1:	STA cuenta 		; guardamos valor de cuenta
+		CALL Convert7	; convertimos a 7 segmentos
+		OUT 00h		; actualizamos valor en el puerto de 7seg 
+		POP PSW		; recuperamos el valor de A
+		RET			; regresa la rutina
+
+
+;-------------------------------------------------------------------
+; Rutina: Leer
+; lee un numero desde teclado
+;---------------------------
+Leer:		PUSH PSW		; salvamos los valores de A y banderas
+		PUSH B		; salvamos los valores de B y C
+		IN 00h		; teclado conectado a puerto 0
+		SUI 30h		; restamos 30h para obtner valor decimal
+		MOV B,A		; guardamos el valor en B
+		CALL Convert7	; converrtijos a 7 seg	
+		OUT 02h		; mostramos en el puerto 5 valor del teclado
+		LDA cuenta		; cargamos el valor actual de la cuenta
+		CMP B			; comparamos con el valor de B
+		JZ iguales		; si es 0 son iguales, adivinastes el numero
+		LDA intentos	; cargamos el valor de intentos
+		DCR A			; decrementamos en 1
+		STA intentos	; guarda valor de intentos
+		JNZ continua	; si llego a 0 se acabaron los intentos
+		MVI A,02h		; condicion de perder
+		JMP actualizar	; salta para actulziar la condicion del juego
+
+iguales:	MVI A,01h		; condicion de ganar
+actualizar:	STA estado		; se salva la condicion
+		MVI A,00h		; sin intentos
+continua:	CALL Convert7	; se muestras los intentos restantes
+		OUT 07h		; se muestra en puerto 07h
+		POP B
+		POP PSW		; se recupera el valor de A y banderas
+		RET			; regresa la rutina
+
+;----------------------------------------------------------------------
+; Rutina: Convert7
+; entrada A decima
+; salida A codigo 7 seg
+;----------------------------------------------------------------------
+Convert7:	PUSH H
+		LXI H,codigos
+		ADD L
+		MOV L,A
+		MOV A,M
+		POP H
+		RET		
+
+;---------------------------------------------------------------------
+; REST 7.5 asociada a tiempo cada 1 seg
+;---------------------------------------------------------------------
+.org 003Ch	
+		CALL Contar
+		RET
+
+;---------------------------------------------------------------------
+; REST 5.5 asociada a teclado
+;---------------------------------------------------------------------
+.org 002Ch
+		CALL Leer
+		RET

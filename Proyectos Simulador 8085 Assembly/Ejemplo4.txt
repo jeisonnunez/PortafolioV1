@@ -1,0 +1,36 @@
+;---------------------------------------------------
+;Programa: Codigo 7 segmentos
+; 02/10/17
+;---------------------------------------------------
+;We're already dead unless we learn everything before the exam
+
+.data 1000h
+
+codigos: DB 77h, 44h, 3Eh, 6Eh, 4Dh, 6Bh, 79h, 46h, 7fh, 4fh
+
+
+.org 0100h
+
+inicio: IN 00h		;numero por teclado
+	  CPI 00h		;verifica si hay dato
+	  JZ inicio		;salta a inicio
+	  SUI 30h		;resto para obtrener digito entre 0 y 9
+	  CALL Convert7Seg ;convierte el codigo decimal en codigo 7seg, entrada reg A, retorno A	
+	  OUT 00h		  
+	  JMP inicio
+	  HLT
+
+;---------------------------------------------------
+; Entrrada: Registro A
+; Salida : Registro A
+; Usa etiqueta codigos
+; Modifica Registro HL
+;---------------------------------------------------
+
+Convert7Seg:	PUSH H		;Salva valor de HL para no perderlo (Cada registro modificado debe salvarse)
+			LXI H, codigos 	;Cargamos dirección de los códigos 7 Seg
+			ADD L			;sumamos para bajo de dirección al acumulador 
+			MOV L,A		;movemos a direccion donde esta el codigo
+			MOV A,M		;codigo de retorno
+			POP H			;Recuperamos cualquier valor de HL
+			RET

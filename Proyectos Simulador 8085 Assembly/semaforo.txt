@@ -1,0 +1,51 @@
+.data 1000h
+
+.data A000h
+video:
+
+.org 0100h
+		MVI C,00h	;contador del color
+inicio:	EI
+		JMP inicio
+		HLT
+
+
+semaforo:
+			PUSH H
+			PUSH PSW
+			LXI H,video
+siguiente:		MOV A,C
+			CPI 00h
+			JZ rojo
+			CPI 01h
+			JZ amarillo
+			CPI 02h
+			JZ verde
+rojo:			MVI A,55h
+			JMP s1
+amarillo:		MVI A,77h
+			JMP s1
+verde:		MVI A,11h
+s1:			MOV M,A
+			INX H
+			MOV A,H
+			CPI BFh
+			JZ continuar
+			JMP siguiente
+continuar:		MOV A,L
+			CPI 40h
+			JNZ siguiente
+			INR C
+			MOV A,C
+			CPI 03h
+			JNZ salir
+			MVI C,00h
+salir:		POP PSW
+			POP H
+			RET
+
+
+
+.org 002Ch
+			CALL semaforo
+			RET

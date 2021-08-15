@@ -1,0 +1,29 @@
+dispara cuando se le da a la tecla A mayuscula (41H)
+
+.DATA 1000H
+.ORG 100H
+;programa principal
+
+esperar:IN 00H
+	CPI 41H
+	JNZ esperar; si es cero salta a esperar
+	MVI A, 08H
+	OUT 00H
+	OUT 01H
+	OUT 02H
+	OUT 03H
+	OUT 04H
+	OUT 05H
+	OUT 06H
+	OUT 07H
+	MVI A, 00H
+	OUT 00H
+	OUT 01H
+	OUT 02H
+	OUT 03H
+	OUT 04H
+	OUT 05H
+	OUT 06H
+	OUT 07H
+	JMP esperar
+	HLT

@@ -1,0 +1,70 @@
+.data A000h
+video:
+
+.data 1000h
+
+color: db 77H
+
+
+
+
+.org 100h
+inicio: ei
+        jmp inicio
+
+
+
+
+.org 2ch 
+            ei 
+		IN 00H
+		SUI 30H
+		CPI 01H
+		jz  init
+		CPI 00H
+		JZ inicio
+		
+init:		mvi d,05h
+		mvi e,3ch
+		mvi c,09h   
+		mvi a,00h   
+linea:      call punto
+		inr e
+		dcr c
+		jnz linea
+		inr d
+		inr a
+		mvi c,09h
+		mvi e,3ch
+		cpi 40h	    
+		jnz linea
+termine:	hlt
+
+
+
+
+punto:      push PSW
+		push B
+		push D 
+		lxi h,video
+		mvi b,0
+		mvi C,50H ;
+		dcr E
+continua: 	mov a,e
+		cpi 0
+		jz terminar
+		dcr E
+		DAD B
+		jmp continua
+terminar: 	dcr D
+		mov c,D
+		DAD B
+		XCHG ; intercambia registro D y E, con H y L
+		LXI H,color
+		mov A, M
+		XCHG
+		mov M,A
+		pop D
+		pop B
+		pop psw
+		ret

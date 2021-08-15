@@ -1,0 +1,76 @@
+; Programa que simula maquina de un torniquete de metro
+; Puerto 0 entrada lector magnetico
+; Puerto 0 salida escritor magnetico
+; Puerto 1 salida display 7 segmentos
+; Puerto 2 activar torniquete, 0 bloqueado, 1 activo
+; Puerto 3 salida, sacar (1) o guardar el ticket (2)
+; Puerto 4 entrada valores de sensores de tomar ticket (1) y pasar torniquete (2), ambas(3)
+
+.DATA 1000H
+cod7sg: DB 77H, 44H, 3EH, 6EH, 4DH, 6BH, 79H, 46H, 7FH, 4FH
+
+; principal
+.ORG 0100H
+inicio:	EI
+		JMP inicio
+		RET
+;fin principal
+
+;RST 5,5
+;Rutina sensor de ticket
+.ORG 002CH
+	
+		IN 00H		;lector banda magnetica
+		CPI 00H		;compara con 0
+		JZ devolver		;si es cero salta a devolver
+		DCR A			;resta un viaje
+		MOV B, A		;se guarda el valor de viajes restantes
+		MVI D, 03H
+		CPI 00H		;se agotaron los viajes
+		JNZ hay		;si no es cero quedan todavia viajes
+		MVI A, 02H		;guarda en deposito
+		MVI D, 02H
+		JMP enviar		
+hay:		OUT 00H		;grabo en ticket
+		MVI A, 01H		;devolver el ticket
+enviar:	OUT 03H		;se guarda o se devuelve
+		MOV A, B		;se recupera el valor de A
+		CALL cnvrt7s	;convierto a 7seg
+		MOV A, B		;
+		OUT 01H		;puerto 1 display 7seg
+		MVI A, 01H		;activacion de torniquete
+		OUT 02H		;puerto 2 torniquete, lo activa
+esperar:	IN 04H		;el hit 0 sensor de tomar ticket, el hit 1 sensor de pasar
+		MOV B, A		;se guarda el valor de ambos puertos
+		CPI 02H		;para saber si ha pasado
+		JNZ nopaso		;no ha pasado la persona
+		MVI A, 00H		;si paso
+		OUT 02H		;bloqueo torniquete
+		MOV A, B		;recupera valor de A
+nopaso:	CMP D			;compara con 11 paso y tomo el ticket
+		JNZ esperar		;espera hasta q se cumpla la condicion
+		MVI A, 00H		
+		OUT 02H		;bloquea torniquete	
+		MVI A, 00H
+		OUT 01H		;borra display de 7seg
+		JMP terminar	
+devolver:	MVI A, 01H		;coloca 1 para activar motor de salida
+		OUT 03H
+notomar:	IN 04H		;se queda esperando hasta q lo toma
+		CPI 01H
+		JNZ notomar
+terminar:	RET
+
+
+;-----------------------------
+; Rutina 7 segmentos
+;-----------------------------
+
+cnvrt7s: 
+	PUSH H; guarda en la pila cualquier valor que tenga HL
+	LXI H, cod7sg; graba la dirección de cod7sg en HL
+	ADD L
+	MOV L,A
+	MOV B, M; mueve lo que hay en M a B, M tiene la direccion de HL
+	POP H
+	RET

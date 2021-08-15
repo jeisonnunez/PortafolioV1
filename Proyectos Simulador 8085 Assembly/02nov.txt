@@ -1,0 +1,46 @@
+;Programa que simula controlador de disco duro
+;Puerto 0 salida, sector
+;puerto 1 salida, 2.leer o 1.escribir
+;puerto 2 entrada, control (1.listo, 2.fin, 3.error)
+;puerto 3 e/s, datos que vienen del disco duro y van
+;puerto 4 salida, fin de ejecucion
+
+.DATA 1000H
+sector:	DB 01H, 02H, 03H, 04H, 05H, 06H, 07H, 08H
+buffer:	DB 00H
+sectori:	DB 01H
+fin:		DB 02H
+cantidad:	DB 04H
+
+
+;programa principal
+
+.ORG 100H
+esperar:	EI
+		JMP esperar
+		HLT
+
+;-----------------------------
+;Rutina de manejo de HD (leer)
+;-----------------------------
+.ORG 002CH
+		LDA cantidad	;cantidad de sectores contiguos q voy a leer
+		MOV D, A	
+		LDA sectori
+		MOV E, A	
+		MOV A, E
+		OUT 00H		;pide sector
+confirmar:	IN 02H		;sector a acceder
+		CPI 01H		;compara si llego al sector
+		JNZ confirmar	;el HD llego al sector
+		MVI A, 01		;escribir
+		OUT 01H		;indica al HD lo que va ahacer (leer)
+		LXI H, buffer	;carga direccion
+		MVI C, FFH		;
+repetir:	IN 03H		;carga datos
+		MOV M, A		;mueve lo que hay en el acum a memoria
+		DCR C			;decrementa c
+		JNZ repetir		;repite hasta q guare los 256 datos
+		MVI A, fin		
+		OUT 04H		;ya termino la interrupcion
+		RET

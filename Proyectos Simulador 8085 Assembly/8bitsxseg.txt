@@ -1,0 +1,34 @@
+Programa que envia 8bits, 1bit por segundo
+
+.DATA 1000H
+dato:	DB FFH			;dato de prueba 10101010
+
+.ORG 100H
+		LDA dato		;cargar dato
+		MOV D, A		; dato a transmitir en D
+		MVI C, 08H		;8 bits a transmitir
+siguiente:	EI			;habilita interrupcion
+		MOV A, C		;mueve 8 veces
+		CPI 00H		;compara si llega a cero
+		JNZ siguiente	;repite 8 veces
+		HLT
+
+;--------------------------------------
+;Rutina de envio de byte
+;5,5
+;dato en D, C contiene cantidad de bits
+;--------------------------------------
+.org 002cH
+		PUSH PSW	
+		MOV A ,D		;recupera valor de D
+		RAR			;rotar
+		MOV D, A 		;guarda en D para no poerder 
+		JC enviar1
+		MVI A, 40H
+		JMP send
+enviar1:	MVI A, C0H
+send:		SIM
+		DCR C
+		POP PSW		
+		RET
+		

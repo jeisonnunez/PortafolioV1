@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Formularios</title>
+<link href="sesion.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+
+
+#subForm{
+	
+	font-size:.8em;	
+	
+}
+
+#subForm .etiq{
+	
+	float:left;
+	width:230px;
+	text-align:right;
+	margin-right:10px;
+	font-weight:bold;
+}
+
+.suscribe{
+	
+	margin-left:10px;
+	background-color:#cbd893;
+	font-family:Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    color: black;
+    padding: 5px;
+	
+}
+    
+    .suscribe:hover{
+        
+       background-color: #5F9794;
+	color: #FBEF99
+    }
+
+#nombre, #email, #clave, #rclave{
+	
+	background-color:#fbef99;
+	font-family:"Lucida Console", Monaco, monospace;
+	font-size:.9em;
+	width:300px;
+	margin-top:-3px;
+	
+}
+
+#nombre:focus, #email:focus, #clave:focus, #rclave:focus, #refer:focus{
+	
+	background-color:#fddc41;	
+	
+}
+    
+    table{
+        
+        margin-top: 210px;
+        margin-left: 200px;
+    }
+    
+    
+.contenedor{
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+ 
+
+.contenedor #p1{
+    position: absolute;
+    top: 55%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+}
+    
+    
+.contenedor #p2{
+    position: absolute;
+    top: 55%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+}
+   
+    .contenedor .titulo1{
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    width: 98%;
+    transform: translate(-50%, -50%);
+    color: #cbd893;
+    font-family: "Lucida Console", Monaco, monospace;;
+    font-size: 17px;
+    padding: 5px;
+    text-align: center;
+   background: #294E56;
+    
+    border: 2px solid #cbd893;
+   
+    
+        
+}
+    .contenedor img{
+        
+        opacity: 0.8;
+    }
+    
+   
+
+</style>
+</head>
+<body id="caracteristicas" class="col2">
+<div id="principal"><h1 class="titulo">Identificador de Supermercados</h1>
+  <div id="banner">
+    <div id="background"><p class="logo">CosmoFarmer 2.0</p>
+      <div id="nav">
+        <ul>
+          <li><a href="index.html" id="homeLink">Pagina Inicial</a></li>
+          
+          <li><a href="cuentas.html" id="linkExpertos">Registro Cuenta</a></li>
+          <li><a href="sesion.html" id="linkPreguntas">Inicio Sesion</a></li>
+            <li><a href="form.html" id="linkPreguntas">Registrate</a></li>
+       
+	<br class="clear"  />
+      </div>
+      <!-- fin nav -->
+    </div>
+    <!-- fin background -->
+  </div>
+  <!-- fin banner -->
+  <div id="cuerpo">
+    <!--<h1 id="lead"><span class="section">Inicio Sesi&oacute;n:</span> Formulario de Inicio</h1>-->
+    <div class="contenedor">
+        
+        <img src="images/shopping-1232944_1920.jpg" width="100%" />
+        
+        <p class="titulo1"><em><strong>La nueva app, que localiza los supermercados mas cercanos y productos al mejor precio, realizando una factura de tu compra segun tu dinero disponible.</strong></em></p>
+        
+        <form id="subForm" name="subForm" method="post" action="">
+
+            <table>
+          <tr><td><p id="p1">
+           <a href="sesion.html" id="linkPreguntas" class="suscribe">Inicio Sesion</a>
+          </p></td>
+
+          <td><p id="p2">
+           <a href="form.html" id="linkPreguntas" class="suscribe">Registrate</a>
+          </p></td>
+            </tr>    
+                </table>
+        </form>
+        
+    </div>
+	<br class="clear" />
+   <!-- <p class="privacy">Identificador de Supermercados sabe que tu privacidad es importante. por eso nuestros datos est&aacute;n protegidos contra el fraude. La ley de protecci&oacute;n de datos te ampara en caso de publicaci&oacute;n malintencionada de algunos de tus datos.</p>-->
+  </div>
+  <!-- fin prinicpal -->
+  <div id="announce">
+    <ul>
+       <li><a href="seleccion_cuenta.html"><span class="title">Cuentas </span>Selecciona una de tus cuentas disponibles para saber el saldo disponible</a></li>
+      <li><a href="supermercados.html"><span class="title">Supermercados</span>Hecha un vistazo a todos los supermercados disponibles desde tu ubicaci&oacute;n actual en un radio de alcance de 200 metros</a></li>
+      <li><a href="productos.html"><span class="title">Productos</span>Consulta los precios de los productos disponibles en un supermercado segun el dinero disponible </a></li>
+      <li><a href="#"><span class="title">B&uacute;squeda</span>Conoce la ubicaci&oacute;n de tu productos favoritos</a></li>
+      
+    </ul>
+  </div>
+  <!-- end anun -->
+</div>
+<!-- end contenedor -->
+</body>
+</html>

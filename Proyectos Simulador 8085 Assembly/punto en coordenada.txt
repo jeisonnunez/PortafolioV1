@@ -1,0 +1,51 @@
+Rutina que imprime un punto (tambien lineas) en las coordenadas dadas
+
+.DATA A000H
+video:
+
+.DATA 1000H
+color:	DB 77H
+amarillo:	DB 77H
+rojo:		DB 55H
+azul:		DB 11H
+
+.ORG 100H 
+		MVI D, 08H
+		MVI E, 20H
+		LDA azul
+		STA color
+lineaH:	CALL punto
+		INR D
+		MOV A, D
+		CPI 0FH
+		JNZ lineaH
+		HLT
+
+;--------------------
+;Rutina punto D=X E=Y
+;--------------------
+punto:	PUSH PSW
+		PUSH B
+		PUSH D		
+		LXI H, video
+		MVI B, 0
+		MVI C, 50H
+		DCR E
+continua:	MOV A, E
+		CPI 00H
+		JZ termina
+		DCR E
+		DAD B
+		JMP continua
+termina:	DCR D
+		MOV C, D
+		DAD B
+		XCHG
+		LXI H, color
+		MOV A, M
+		XCHG
+		MOV M, A		
+		POP D
+		POP B
+		POP PSW
+		RET

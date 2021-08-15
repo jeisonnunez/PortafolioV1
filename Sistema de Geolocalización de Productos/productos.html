@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Formularios</title>
+<link href="sesion.css" rel="stylesheet" type="text/css" />
+<script language="javascript" type="text/javascript">
+
+function sumar(){
+	
+    obj = document.subForm['id'];	
+    totalChecks = obj.length;
+    totalSumado = 0;
+    inicial = document.subForm['name'];
+    minicial = inicial.value.split('-');
+	
+    for( i=0; i<totalChecks; i++){ 
+        if( obj[i].checked == true ){
+            valor = obj[i].value.split('-');
+			
+			    
+            totalSumado = totalSumado + parseInt(valor[0],10);
+        }
+    }
+    document.getElementById("can").value = totalSumado; 
+    document.getElementById("res").value = minicial-totalSumado; 
+}
+
+</script>
+<style type="text/css">
+
+
+#subForm{
+	
+	font-size:1.0em;
+	
+}
+
+#subForm .etiq{
+	
+	float:left;
+	width:105px;
+	text-align:right;
+	margin-right:10px;
+	font-weight:bold;
+}
+
+#suscribe{
+	
+	margin:10px;
+	  color: #D6ECAE;
+	
+	background-color: #294E56;
+	font-family:Arial, Helvetica, sans-serif;
+   
+    
+	
+}
+    
+
+
+#nombre, #email, #clave, #rclave, #can, #res{
+	
+	background-color:#fbef99;
+	font-family:"Lucida Console", Monaco, monospace;
+	font-size:1.5em;
+	width:300px;
+	margin-top:-3px;
+	
+}
+
+#nombre:focus, #email:focus, #clave:focus, #rclave:focus, #refer:focus, #can:focus, #res:focus{
+	
+	background-color:#fddc41;	
+	
+}
+    
+    table{
+        
+        margin-left: 60px;
+        border: #111;
+        padding: 0;
+        
+    }
+    
+    .texto{
+        
+        background-color:#fddc41;
+        font-size: 16px;
+        text-align: center;
+        padding: 5px;
+    }
+    
+    td, tr{
+          background-color:#fddc41;
+        margin: 0;
+        padding: 0;
+        
+    }
+    
+    .boton{
+          background-color:#fddc41;
+      
+        
+    }
+    
+    #nombre, .etiq, #res, #can{
+        
+        font-size: 16px;
+        margin-bottom: 0px;
+        padding-bottom: 0px;
+        
+    }
+    
+    img{
+        
+        width: 140px;
+        height: 70px;
+    }
+    
+    #clt, #clt1, #clt2, #clt3, #clt4, #clt5{
+        
+        display: none;
+        
+    }
+    
+    .car{
+        
+        width: 45px;
+        height: 70px;
+    }
+    
+    td label:hover{
+        
+        
+        cursor:pointer;
+		background:rgba(0,0,0,0.3);
+    }
+
+     td label:click{
+        
+        
+        
+		
+    }
+</style>
+</head>
+<body id="caracteristicas" class="col2">
+<div id="principal"><h1 class="titulo">Identificador de Supermercados</h1>
+  <div id="banner">
+    <div id="background"><p class="logo">CosmoFarmer 2.0</p>
+      <div id="nav">
+        <ul>
+          <li><a href="index.html" id="homeLink">Pagina Inicial</a></li>
+          
+          <li><a href="cuentas.html" id="linkExpertos">Registro Cuenta</a></li>
+          <li><a href="sesion.html" id="linkPreguntas">Inicio Sesion</a></li>
+            <li><a href="form.html" id="linkPreguntas">Registrate</a></li>
+       
+	<br class="clear"  />
+      </div>
+      <!-- fin nav -->
+    </div>
+    <!-- fin background -->
+  </div>
+  <!-- fin banner -->
+  <div id="cuerpo">
+    <h1 id="lead"><span class="section">Lista:</span> Productos disponibles en supermercado seleccionado</h1>
+    
+    <form id="subForm" name="subForm" method="post" action="">
+        
+        <table  width="50%" border="1">
+            
+        <p><label for="nombre" class="etiq">Saldo</label>
+      <input type="text" name="name" id="nombre" value="3500000"/></p>
+            
+        
+          <tr>
+            <td><img src="images/pasta.jpg"/></td>
+            <td class="texto"><strong>Pasta Ronco</strong></td>
+              <td class="texto"><strong>250000 BSF</strong></td>
+              <td><input name="id" id="clt" type="checkbox" value="250000-abcdef" onclick="sumar()" />
+             
+    <label for="clt"><img  class="car" src="images/1778357-diaporama-300x260.png" height="30px" width="15px" /></label>
+              
+              </td><br>
+             
+           
+          </tr>
+          <tr>
+            <td><img src="images/arroz.jpg"/></td>
+            <td class="texto"><strong>Arroz Mary</strong></td>
+              <td class="texto"><strong>200000 BSF</strong></td>
+              <td><input name="id" id="clt1" type="checkbox" value="200000-abcdef" onclick="sumar()" />
+              <label for="clt1"><img  class="car" src="images/1778357-diaporama-300x260.png" height="30px" width="15px" /></label>
+              </td><br>
+             
+            
+          </tr>
+          <tr>
+            <td><img src="images/azucar.jpg"/></td>
+            <td class="texto"><strong>Azucar Konfit</strong></td>
+              <td class="texto"><strong>150000 BSF</strong></td>
+              <td><input name="id" id="clt2" type="checkbox" value="150000-abcdef" onclick="sumar()" />
+              <label for="clt2"><img  class="car" src="images/1778357-diaporama-300x260.png" height="30px" width="15px" /></label>
+              </td><br>
+             
+              
+          </tr>
+          <tr>
+            <td><img src="images/huevos.jpg"/></td>
+            <td class="texto"><strong>Huevos</strong></td>
+              <td class="texto"><strong>500000 BSF</strong></td>
+              <td><input name="id" id="clt3" type="checkbox" value="500000-abcdef" onclick="sumar()" />
+              <label for="clt3"><img  class="car" src="images/1778357-diaporama-300x260.png" height="30px" width="15px" /></label>
+              </td><br>
+             
+              
+          </tr>
+          <tr>
+            <td><img src="images/harina.jpg"/></td>
+            <td class="texto"><strong>Harina Pan</strong></td>
+              <td class="texto"><strong>120000 BSF</strong></td>
+              <td><input name="id" id="clt4" type="checkbox" value="120000-abcdef" onclick="sumar()" />
+              <label for="clt4"><img  class="car" src="images/1778357-diaporama-300x260.png" height="30px" width="15px" /></label>
+              </td><br>
+             
+             
+          </tr>
+           <tr>
+            <td><img src="images/caraota.jpg"/></td>
+            <td class="texto"><strong>Caraota Iberia</strong></td>
+              <td class="texto"><strong>350000 BSF</strong></td>
+              <td><input name="id" id="clt5" type="checkbox" value="350000-abcdef" onclick="sumar()" />
+               <label for="clt5"><img  class="car" src="images/1778357-diaporama-300x260.png" height="30px" width="15px" /></label>
+               </td><br>
+             
+          </tr>
+           
+        </table> 
+        <br><br>
+        
+         <p><label for="can" class="etiq">Total a Cancelar: </label>
+        <input type="text" name="can" id="can" value="0"/></p>
+        
+        <br>
+        
+         <p><label for="res" class="etiq">Monto Restante: </label>
+        <input type="text" name="res" id="res" value="3500000"/></p>
+        
+        
+         
+        
+	   </form>
+	<br class="clear" />
+    <p class="privacy">Identificador de Supermercados sabe que tu privacidad es importante. por eso nuestros datos est&aacute;n protegidos contra el fraude. La ley de protecci&oacute;n de datos te ampara en caso de publicaci&oacute;n malintencionada de algunos de tus datos.</p>
+  </div>
+  <!-- fin prinicpal -->
+  <div id="announce">
+    <ul>
+      <li><a href="seleccion_cuenta.html"><span class="title">Cuentas </span>Selecciona una de tus cuentas disponibles para saber el saldo disponible</a></li>
+      <li><a href="supermercados.html"><span class="title">Supermercados</span>Hecha un vistazo a todos los supermercados disponibles desde tu ubicaci&oacute;n actual en un radio de alcance de 200 metros</a></li>
+      <li><a href="productos.html"><span class="title">Productos</span>Consulta los precios de los productos disponibles en un supermercado segun el dinero disponible </a></li>
+      <li><a href="#"><span class="title">B&uacute;squeda</span>Conoce la ubicaci&oacute;n de tu productos favoritos</a></li>
+      
+    </ul>
+  </div>
+  <!-- end anun -->
+</div>
+<!-- end contenedor -->
+</body>
+</html>

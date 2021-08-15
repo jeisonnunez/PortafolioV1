@@ -1,0 +1,44 @@
+.DATA 00h 10h
+77h 44h 3Eh 6Eh 4Dh 6Bh 7Bh 46h 7Fh 4Fh 
+.ORG 00h 01h
+FBh 
+C3h 00h 01h 
+76h 
+.ORG 2Ch 00h
+DBh 00h 
+FEh 00h 
+CAh 66h 00h 
+3Dh 
+47h 
+FEh 00h 
+C2h 3Fh 00h 
+3Eh 02h 
+C3h 41h 00h 
+3Eh 01h 
+D3h 03h 
+78h 
+D3h 00h 
+CDh 67h 00h 
+78h 
+D3h 01h 
+3Eh 01h 
+D3h 02h 
+DBh 04h 
+47h 
+FEh 02h 
+D2h 5Dh 00h 
+3Eh 00h 
+D3h 02h 
+78h 
+FEh 03h 
+C2h 50h 00h 
+3Eh 00h 
+D3h 02h 
+C9h 
+E5h 
+21h 00h 10h 
+85h 
+6Fh 
+46h 
+E1h 
+C9h 

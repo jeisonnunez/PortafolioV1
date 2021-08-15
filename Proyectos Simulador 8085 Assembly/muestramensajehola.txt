@@ -1,0 +1,30 @@
+.data E000h
+video:
+
+.data 1000h
+	
+mensaje:	DB 'H','O','L','A', 0Dh
+
+.org 100h
+		LXI H, mensaje	
+		CALL printf		
+		HLT
+
+printf: 
+		PUSH PSW
+		PUSH H
+		LXI H, video
+repetir:
+		XTHL 
+		MOV A, M
+		CPI 0Dh
+		JZ salir
+		INX H
+		XTHL 
+		MOV M, A	
+		INX H
+		JMP repetir
+salir:	POP H
+		POP PSW
+		RET
+	

@@ -1,0 +1,38 @@
+;------------------------------------------
+; Autor: Ronald Pereira
+; Fecha: 27 sep 2017
+; Ejemplo 1
+;------------------------------------------
+
+.DATA 1000h
+dato: 	DB 01H; Etiqueta "dato" y se define un byte "02" valor inicial
+
+.org 0100h
+
+Inicio:	LDA valor
+		MOV B,A
+
+ciclo:	MOV A,B
+		OUT 00H
+		IN 00H
+		CPI 00H
+		JZ ciclo
+		CPI 01H
+		JZ left
+		CPI 02H
+		JZ right
+		CPI 03H
+		JZ end
+		JMP ciclo
+
+left:       MOV A,B
+		RLC
+		MOV B,A
+		JMP ciclo
+
+right: 	MOV A,B
+		RRC
+		MOV B,A
+		JMP ciclo
+
+Fin:		HLT

@@ -1,0 +1,56 @@
+.org 0100h
+inicio:		EI	; habilita interrupciones
+		JMP inicio
+
+
+;-----------------------------------------
+; rutinas
+;
+
+rutinaTrap:
+		INR B
+		MOV A.B
+		OUT 01h	
+		RET
+
+
+rutina75:
+		INR C
+		MOV A.C
+		OUT 02h
+		RET
+
+rutina65:	
+		INR D
+		MOV A,D
+		OUT 03h
+		RET
+
+rutina55:
+		INR E
+		MOV A,E
+		OUT 04	
+		RET
+
+
+;---------------------------------------
+; rutinas de interrocoimnes
+;---------------------------------------
+.org 0024h
+inTrap:		
+		CALL rutinaTrap
+		RET
+
+.org 003Ch
+int/5:		CALL rutina75
+		RET
+
+
+.org 0034h
+int65:		CALL rutina65
+		RET
+
+.org 002Ch
+int55:		CALL rutina55
+		RET
+		

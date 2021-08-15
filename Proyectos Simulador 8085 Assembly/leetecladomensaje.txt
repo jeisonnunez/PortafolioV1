@@ -1,0 +1,46 @@
+.data E000h
+video:
+
+.data 1000h
+	
+mensaje:	DB 'H','O','L','A', 0Dh
+
+.org 100h
+		LXI H, mensaje	
+		CALL scanf	; llamamos a scanf	
+		HLT
+
+scanf:		PUSH PSW 		; scanf lee el mensaje (memoria) y lo coloca en H	
+		PUSH H 		; Guardamos H
+		LXI H, video 	; Guardamos la posicion de video
+
+leyendo:	EI			; habilita las interrupciones
+		CPI 0Dh		; comparo con enter
+		JNZ leyendo		; salto a layendo
+		POP H			; recuperamos lo que teniamos
+		POP PSW		; recuperamos lo que teniamos
+		RET
+
+printf:     PUSH PSW
+		PUSH H
+		LXI H, video
+
+repetir:	XTHL 
+		MOV A, M
+		CPI 0Dh
+		JZ salir
+		INX H
+		XTHL 
+		MOV M, A	
+		INX H
+		JMP repetir
+
+salir:		POP H
+		POP PSW
+		RET
+	
+.org 002Ch
+		IN 00h	; Lee teclado
+		MOV M,A	; mueve el valor de puerto a la memoria
+		INX H		; incremento a la siguiente posicion donde voy a imprimir
+		RET

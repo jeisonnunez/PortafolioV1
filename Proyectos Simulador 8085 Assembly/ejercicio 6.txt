@@ -1,0 +1,50 @@
+Lee un numero binario ingresado por el puerto 00 del interruptor, el numero no puede ser mayor q 8
+Lee la cantidad de interruptores encendidos en el puerto de interruptores 01
+Si la cantidad de interruptores encendidos en 02H es mayor o igual al numero binario, en el puerto de LEDS 07 se mostraran todos encendidos!
+
+.DATA 1000H
+cod7sg: DB 77H, 44H, 3EH, 6EH, 4DH, 6BH, 79H, 46H, 7FH, 4FH
+cantidad: DB 00H
+.ORG 100H
+;programa principal
+
+inicio: IN 00H; coloca valor en binario, nuemro entre 0 y 8
+	STA cantidad; guarda el valor del puerto 00H
+	CALL cnvrt7s
+	MOV A, B
+	OUT 00H; muestra el valor el el puerto 7seg
+	MVI C, 08H
+	MVI E, 00H; E llevara la cuenta de los unos '1'
+	IN 01H
+repetir:RAL; rota a la izq
+	JNC salto1;pregunta si hay acarreo, es decir que sí hay un 1
+	INR E
+salto1: DCR C
+	JNZ repetir
+	MOV A, E
+	call cnvrt7s
+	MOV A, B
+	OUT 02H
+	LDA cantidad
+	CMP E
+	JZ igualmay
+	JC igualmay
+	MVI A, 0H
+	JMP seguir
+igualmay: MVI A, FFH
+seguir: OUT 07H
+	JMP inicio
+	HLT
+
+;Inicio de rutina conversión
+;A: Dato de entrada
+;B: Dato de salida
+
+cnvrt7s: 
+	PUSH H; guarda en la pila cualquier valor que tenga HL
+	LXI H, cod7sg; graba la dirección de cod7sg en HL
+	ADD L
+	MOV L,A
+	MOV B, M; mueve lo que hay en M a B, M tiene la direccion de HL
+	POP H
+	RET

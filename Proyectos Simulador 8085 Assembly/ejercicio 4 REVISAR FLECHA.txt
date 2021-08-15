@@ -1,0 +1,46 @@
+Muestra una flecha q dependiendo el sentido (abajo) se va desplazando a esa direccion
+
+.DATA 1000H
+flecha: DB 0H,0H,0H,0H,0H,0H,0H,0H
+	DB 00H, 18H, 18H, 18H, FFH, 7EH, 3CH, 18H
+.ORG 0100H
+;programa principal
+
+LXI H, flecha; carga a H la direcciòn de la flecha
+
+ciclo1: MVI C, 0H; c se usa como contador para saber cuantas veces se esta dibujando
+ciclo2: MOV L, C; mueve a L lo que hay en C
+	CALL dibujar
+	INR C
+	MOV A,C 
+	CPI 10H
+	JNZ ciclo2; salta si no es 0 al ciclo 2
+	JMP ciclo1; si es 0 salta a ciclo 1
+	HLT
+
+;rutina que dibuja la flecha
+dibujar:MOV A, M; mueve a A lo que hay en memoria, en H hay lo que esta en la flecha
+	OUT 00H
+	INR L
+	MOV A, M
+	OUT 01H
+	INR L
+	MOV A, M
+	OUT 02H
+	INR L
+	MOV A, M
+	OUT 03H
+	INR L
+	MOV A, M
+	OUT 04H
+	INR L
+	MOV A, M
+	OUT 05H
+	INR L
+	MOV A, M
+	OUT 06H
+	INR L
+	MOV A, M
+	OUT 07H
+	INR L
+	RET

@@ -1,0 +1,43 @@
+programa que recibe 1 o 0 y los muestra en siete segmentos
+
+.DATA 1000H
+cod7sg:	DB 77H, 44H, 3EH, 6EH, 4DH, 6BH, 79H, 46H, 7FH, 4FH
+stado:	DB 00H
+dato:		DB FFH
+
+.ORG 100H
+
+siguiente:	EI			;habilita interrupcion
+		JMP siguiente
+		HLT
+
+;Rutina 7seg
+cnvrt7s:	PUSH H
+		LXI H, cod7sg
+		ADD L
+		MOV L, A
+		MOV B, M
+		POP H
+		RET
+
+;--------------------------------------
+;Rutina de envio de byte
+;5,5
+;dato en D, C contiene cantidad de bits
+;--------------------------------------
+.org 002cH
+		RIM			;lee puerto serial
+		RAL			;rota a la izquierda
+		JC llego1		;si hay acarreo es pq llego 1
+		MVI A, 00H
+		JMP continuar
+llego1:	MVI A, 01H
+continuar:	CALL cnvrt7s
+		MOV A, B		
+		OUT 07H
+		LDA stado
+		CMA	
+		STA stado
+		OUT 00H
+		RET
+		

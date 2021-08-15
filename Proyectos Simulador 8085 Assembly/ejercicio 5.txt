@@ -1,0 +1,53 @@
+Realiza una 'animacion' similar a una carga( que esta cargando) y una de explosion
+.DATA 1000H
+
+secuencia: DB 01H, 02H, 04H, 40H, 20H, 10H
+
+.ORG 100H
+
+ciclo1: LXI H, secuencia
+ciclo2: CALL leer
+	MOV A, M
+	OUT 00H
+	INR L
+	MOV L, A
+	CPI 06H
+	JNZ ciclo2
+	JMP ciclo1
+	HLT
+
+;rutina que va a leer el valor del teclado para iniciar la animacion
+leer:	IN 00H
+	CPI 41H; compara lo que hay en el acumulador con 41H (letra A)
+	JNZ regresar
+	MVI A, 08H
+	OUT 01H
+	OUT 02H
+	OUT 03H
+	OUT 04H
+	OUT 05H
+	OUT 06H
+	OUT 07H
+	MOV A, 00H
+	OUT 01H
+	OUT 02H
+	OUT 03H
+	OUT 04H
+	OUT 05H
+	OUT 06H
+	OUT 07H
+	CALL boom
+regresar: RET
+
+;rutina que simulara una explosion
+boom:	MVI A, 08H
+	OUT 07H
+	MVI A, 5DH
+	OUT 07H
+	MVI A, 00H
+	MVI A, 00H
+	OUT 07H
+	MOV A, 00H
+	OUT 07H
+	RET
+	

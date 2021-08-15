@@ -1,0 +1,86 @@
+;Programa de interrupciones PARTE 2
+;Fecha: 10/10/2016
+;Habilitar RST 7.5 1000 milisegundos  y RST 5.5 por teclado
+.DATA 1000h
+codigo7seg: db  77H,44H,3EH,6EH,4DH,6BH,7BH,46H,7FH,4FH
+.ORG 0100h
+
+inicio: 	EI
+		JMP inicio
+		HLT
+
+;-------------------------------------------
+;Rutina que muestra la conversion de 7 segmentos en el puerto 00	
+;--------------------------------------------
+mostrar: 	
+		IN 00h
+		CPI 00h
+		JZ regresar
+		SUI 30h
+		CALL convert7seg
+		MOV A,B
+		OUT 00h
+regresar:	RET
+		
+;-------------------------------------------
+;Rutina que se ejecuta con RST 7.5	
+;--------------------------------------------
+contar: 
+		PUSH PSW
+		INR D
+		MOV A,D
+		CPI 0Ah
+		JNZ ponercero
+		MVI D,0
+ponercero:	MOV A,D
+		CALL convert7seg
+		MOV A,B
+		OUT 07h
+		POP PSW
+regresar:	RET
+;-------------------------------------------
+;Rutina de conversion de digito decimal a 7seg	
+;--------------------------------------------
+convert7seg:
+	PUSH H; guarda en la pila cualquier valor que tenga HL
+	LXI H, codigo7seg; graba la dirección de cod7sg en HL
+	ADD L
+	MOV L,A
+	MOV B,M; mueve lo que hay en M a B, M tiene la direccion de HL
+	POP H
+	RET
+
+;-------------------------------------------
+;Rutina de TRAP	
+;--------------------------------------------
+.ORG 0024h
+		CALL mostrar
+		MOV A,B
+		OUT 00h
+		;Aqui debo colocar el codigo de esta rutina
+		RET
+
+;-------------------------------------------
+;Rutina de RST 7.5	
+;--------------------------------------------
+.ORG 003Ch
+		CALL contar
+		;Aqui debo colocar el codigo de esta rutina
+		RET
+
+;-------------------------------------------
+;Rutina de RST 6.5	
+;--------------------------------------------
+.ORG 0034h
+		CALL mostrar		
+		;Aqui debo colocar el codigo de esta rutina
+		RET
+
+;-------------------------------------------
+;Rutina de RST 5.5	
+;--------------------------------------------
+.ORG 002Ch
+		CALL mostrar		
+		;Aqui debo colocar el codigo de esta rutina
+		RET
+

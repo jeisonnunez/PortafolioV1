@@ -1,0 +1,30 @@
+.data 1000h
+
+espacio: DB 00h
+
+.data A000h 
+
+video:
+
+	.org 0100h 
+	CALL clscr			
+	HLT
+clscr:
+	PUSH H
+	PUSH PSW
+	LXI H, video
+siguiente:
+	LDA espacio	
+	MOV M,A
+	INX H	
+	MOV A, H
+	CPI BFh
+	JN continuar
+	JMP siguiente
+continuar:
+	MOV A, L
+	CPI 40h
+	JNZ siguiente	
+	POP PSW	
+	POP H
+	RET

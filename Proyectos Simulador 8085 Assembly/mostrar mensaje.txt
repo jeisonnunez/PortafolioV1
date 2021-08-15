@@ -1,0 +1,52 @@
+;programa que imprime un msj determinado
+
+.DATA 1000H
+filasMax:	DB 19H		;25 decimal
+colMax:	DB 28H		;40 decimal
+mensaje:	DB 'P', 'A', 'S', 'T', 'E', 'L', 'A', 'T', 'O', 0DH
+
+.DATA E000H
+videoTexto: DB 00H
+
+.org 0100H
+		MVI D, 0H
+		MVI E, 0H
+		LXI H, mensaje
+repetir:	MOV A, M
+		CPI 0DH
+		JZ terminar
+		CALL printChar
+		INR D
+		INX H
+		JMP repetir
+terminar:	HLT
+
+;------------------------------------
+;Rutina de 	impresion de un caracter
+;Dato= A
+;x= D
+;y= E
+;------------------------------------
+
+printChar:	PUSH H		;guarda valor de H y L
+		PUSH B		;guarda valor de B
+		PUSH D		;guarda valor de D y E
+		PUSH PSW		;guarda valor de A
+		LDA colMax		;cantidad de col max segun el arquitecto
+		MOV C, A		;copia colMax en C
+		LXI H, videoTexto	;carga direccion de video a H
+		MOV B, D		;copia el valor de X en B
+		MVI D, 0H		;inicializamos D en 0 por suma para DAD suma a HL el contenido de DE
+multiplica:	DAD D			;suma a HL el valor de DE
+		DCR C			;multiplica
+		JNZ multiplica	;si no ha terminado repite
+		MOV E, B		;recupera el valor de X que esta en B
+		MVI D, 0		;inicializa el valor de DE
+		DAD D			;suma DE a HL
+		POP PSW		;recupera el dato
+		MOV M, A		;mueve a memoria el dato
+		POP D			;recupera toos los registros
+		POP B
+		POP H
+		RET			; fin rutina
+

@@ -1,0 +1,14 @@
+.data 1000h
+ciclo:	DB 01h, 02h, 04h, 40h, 20h, 10h
+
+.org 100h
+		
+lazo2:	MVI C,06h		
+		LXI H, ciclo
+lazo1:	MOV A,M
+		OUT 00h
+		INX H	
+		DCR C
+		JNZ lazo1
+		JMP lazo2
+		HLT

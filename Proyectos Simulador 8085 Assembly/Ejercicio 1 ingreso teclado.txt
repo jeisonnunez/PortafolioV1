@@ -1,0 +1,28 @@
+Ingresa por el teclado un numero y lo muestra por el display 7 segmentos.
+
+
+
+
+.DATA 1000H
+cod7sg: DB 77H, 44H, 3EH, 6EH, 4DH, 6BH, 79H, 46H, 7FH, 4FH
+.ORG 100H
+;programa principal
+
+esperar: IN 00H
+	   CPI 00H
+	   JZ esperar
+	   SUI 30H; resta 30 al acumulador,los numeros 0,1,2,3,4,5,6,7,8,9 en hexadecimal son 30,31,32,33,34,45,36,37,38,39, si se les resta 30 queda solo el numero decimal.
+	   CALL cnvrt7s
+	   MOV A, B
+	   OUT 00H
+	   JMP esperar
+	   HLT
+
+cnvrt7s: 
+	PUSH H; guarda en la pila cualquier valor que tenga HL
+	LXI H, cod7sg; graba la dirección de cod7sg en HL
+	ADD L
+	MOV L,A
+	MOV B, M; mueve lo que hay en M a B, M tiene la direccion de HL
+	POP H
+	RET

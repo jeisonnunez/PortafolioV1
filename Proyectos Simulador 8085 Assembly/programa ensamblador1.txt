@@ -1,0 +1,37 @@
+.DATA 1000h 
+
+numero: DB 01h ; direccion donde se guardan los datos
+
+ORG. 0100h 
+
+Inicio: 
+
+	LDA numero	
+	MOV B,A
+repeticion: MOV A,B
+	OUT 00H
+	IN 00h
+	CPI 00h 
+	JZ repeticion
+	CPI 01h
+	JZ izquierda
+	CPI 02h
+	JZ derecha
+	CPI 03h
+	JZ fin
+
+izquierda: 
+MOV A,B
+RLC 
+MOV B,A
+JMP repeticion
+
+
+derecha:
+
+MOV A,B
+RRC
+MOV B,A
+JMP repeticion
+
+fin:

@@ -1,0 +1,57 @@
+OPrograma que muestra una figura con puntitos
+
+.DATA 0100H
+letra:	DB 07H, 77H, 77H, 70H
+		DB 07H, 00H, 00H, 70H
+		DB 07H, 00H, 00h, 00h
+		DB 07H, 00h, 00h, 00H
+		DB 07H, 00H, 77H, 70H
+		DB 07H, 00H, 00H, 70H
+		DB 07H, 00H, 00H, 70H
+		DB 07H, 77H, 77h, 70H
+
+.DATA A000H
+video:
+
+.ORG 1000H
+		LXI H, video
+		PUSH H
+		LXI H, letra
+		MVI E, 08H
+
+L1:		MOV A, M
+		INX H
+		XTHL
+		MOV M, A
+		INX H
+		XTHL
+
+		MOV A, M
+		INX H
+		XTHL
+		MOV M, A
+		INX H
+		XTHL
+
+		MOV A, M
+		INX H
+		XTHL
+		MOV M, A
+		INX H
+		XTHL
+
+		MOV A, M
+		INX H
+		XTHL
+		MOV M, A
+
+		MVI B, 0		;se desplaza a la siguiente linea
+		MVI C, 4DH		
+		DAD B
+		XTHL
+		DCR E
+		JNZ L1		;repite 8 veces
+		POP H
+		HLT
+
+		

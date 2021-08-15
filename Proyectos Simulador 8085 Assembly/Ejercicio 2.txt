@@ -1,0 +1,56 @@
+Calculadora que resta un numero mas grande que el otro y mostrara por display la ec. ejm: 8-4= 4
+
+lee otro numero y coloca en puerto 2
+el resultado lo muestra en puerto 7
+
+
+
+.DATA 1000H
+cod7sg: DB 77H, 44H, 3EH, 6EH, 4DH, 6BH, 79H, 46H, 7FH, 4FH
+.ORG 100H
+;programa principal
+
+espera1:IN 00H
+	CPI 00H; compara dato con el acumulador
+	JZ espera1
+	SUI 30H
+	MOV D, A	
+	CALL cnvrt7s
+	MOV A, B
+	OUT 00H; lee un numero y coloca en puerto 0
+	MVI A, 08H; 08H es el signo de resta '-'
+	OUT 01H
+	MVI A, 00H
+
+
+espera2:IN 00H
+	CPI 00H
+	JZ espera2
+	SUI 30H
+	MOV E, A
+	CALL cnvrt7s
+	MOV A,B 
+	OUT 02H
+	MVI A, 22H; 22H es el simbolo de igual '='
+	OUT 03H
+	MOV A, D
+	SUB E
+	CALL cnvrt7s
+	MOV A, B
+	OUT 04H
+	JMP espera1
+	
+	
+
+;Inicio de rutina conversión
+;A: Dato de entrada
+;B: Dato de salida
+
+cnvrt7s: 
+	PUSH H; guarda en la pila cualquier valor que tenga HL
+	LXI H, cod7sg; graba la dirección de cod7sg en HL
+	ADD L
+	MOV L,A
+	MOV B, M; mueve lo que hay en M a B, M tiene la direccion de HL
+	POP H
+	RET

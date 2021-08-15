@@ -1,0 +1,168 @@
+programa que cuando se realiza la interrupcion, simula el movimiento el mouse, mediante los interruptores (1= X, 2= Y) 
+
+;--------------------------------------------------------
+;puerto 1: Coordenada X 1 izq, 2 derecha, 0 no se mueve
+;puerto 2: Coordenada Y 1 arriba, 2 abajo, 0 no se mueve
+;rst 5.5 al teclado
+;--------------------------------------------------------
+
+;Definicion de datos
+
+.DATA 1000H
+mouse:	DB	00H, 00H, 10H, 00H
+		DB	00H, 01H, 11H, 00H
+		DB	00H, 11H, 11H, 00H
+		DB	01H, 11H, 11H, 00H
+		DB	01H, 11H, 11H, 00H
+		DB	00H, 11H, 11H, 00H
+		DB	01H, 11H, 00H, 00H
+		DB	01H, 11H, 00H, 00H
+
+x1:		DB 28H
+y1:		DB 18H
+
+.DATA A000H
+
+video:	
+
+;--------------------
+;programa principal
+;--------------------
+.ORG 0100H
+		CALL dibujar
+inicio:	EI
+		JMP inicio
+		HLT
+
+;-------------------------------------
+;Interrupcion 5.5 asociada al teclado
+;-------------------------------------
+.ORG 002CH
+		CALL borrar		;borra donde esta el mouse, para dibujarlo en la siguiente posicion
+		LDA x1		;carga coordenada X
+		MOV B, A		;guarda X en B
+		IN 01H		;espera entrada del puerto 1
+		CPI 01H		;si es 1 se mueve a la izq
+		JZ izquierda	;salta a la instruccion de la izq
+		CPI 02H		;si es 2 se mueve a la derecha
+		JZ derecha		;salta a la instruccion de la derecha
+		MOV A, B		;el acumulador retoma el valor de X
+		JMP salto1
+
+derecha:	MOV A, B		;se recupera la coordenada
+		INR A			;incrementa A para moverse a la derecha
+		CPI 4DH		;limite del lado derecho
+		JNZ salto1		;si esta en el limite salta
+		MVI A, 4CH		;mueve a A el limite
+		JMP salto1		;salta
+
+izquierda:	MOV A, B
+		DCR A
+		CPI FFH
+		JNZ salto1
+		MVI A, 00H
+salto1:	STA x1
+
+		LDA y1
+		MOV B, A
+		IN 02H
+		CPI 01H
+		JZ arriba
+		CPI 02H
+		JZ abajo
+		MOV A, B
+		JMP salto2
+
+abajo:	MOV A, B
+		INR A	
+		CPI 5CH
+		JNZ salto2
+		MVI A, 5BH
+		JMP salto2
+
+arriba:	MOV A, B
+		DCR A	
+		CPI FFH
+		JNZ salto2
+		MVI A, 00H
+salto2:	STA y1
+		CALL dibujar
+		RET
+
+;------------------------------------------------------------
+;rutina que borra el cursosr actual, borra un espacio de 8x8
+;------------------------------------------------------------
+borrar:	LXI H, video
+		LDA y1
+		MOV E, A
+		MVI D, 00H
+		MVI C, 50H
+multi:	DAD D
+		DCR C
+		JNZ multi
+		LDA x1
+		MOV E, A
+		DAD D
+		MVI E, 4DH
+		MVI A, 00H
+		MVI C, 08H
+repetir:	MOV M, A	
+		INX H
+		MOV M, A
+		INX H
+		MOV M, A
+		INX H
+		MOV M, A
+		DAD D
+		DCR C
+		JNZ repetir
+		RET
+
+;------------------
+;rutina que dibuja
+;------------------
+dibujar:	
+		LXI H, video
+		LDA y1
+		MOV E, A
+		MVI D, 00H
+		MVI C, 50H
+multi2:	DAD D
+		DCR C
+		JNZ multi2
+		LDA x1		
+		MOV E, A
+		DAD D
+		PUSH H
+		LXI H, mouse
+		MVI E, 08H
+L1:		MOV A, M		
+		INX H
+		XTHL
+		MOV M, A
+		INX H
+		XTHL
+		MOV A, M		
+		INX H
+		XTHL
+		MOV M, A
+		INX H
+		XTHL
+		MOV A, M		
+		INX H
+		XTHL
+		MOV M, A
+		INX H
+		XTHL
+		MOV A, M		
+		INX H
+		XTHL
+		MOV M, A
+		MVI B, 00H
+		MVI C, 4DH
+		DAD B
+		XTHL
+		DCR E
+		JNZ L1
+		POP H
+		RET

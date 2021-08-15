@@ -1,0 +1,80 @@
+INTERRUPCIONES 2
+
+.DATA 1000H 
+cod7sg: 	DB 77H, 44H, 3EH, 6EH, 4DH, 6BH, 79H, 46H, 7FH, 4FH
+;--------------------------------
+;Programa principal
+;--------------------------------
+
+.ORG 100H; en las direcciones 0 y 100 están las direcciones de las interrupciones
+inicio:	EI		; habilita interrupciones
+		JMP inicio	; se debe volver a habilitar las interrupciones, de otra forma no podran ser usadas de nuevo
+		HLT
+
+;--------------------------------
+;Rutina de mostrar informacion
+;--------------------------------
+mostrar:	IN 01H	; hay un numero que identifica al dispositivo
+		CALL cnvrt7s
+		MOV A,B	; tomara el valor de A y lo mostrara en un puerto
+		OUT 00H
+		IN 02H	; dato provisto por el dispositivo que interrumpio		
+		CALL cnvrt7s
+		MOV A,B
+		OUT 07H
+		RET
+
+;--------------------------------
+;Rutina de contar
+;--------------------------------
+contar: 	PUSH PSW
+		INR D		; incrementa D
+		MOV A, D
+		CPI 0AH	; compara con el 10, para ver si esta entre 0 y 9
+		JNZ nocero	
+		MVI D, 00H
+nocero:	MOV A, D
+		CALL cnvrt7s
+		MOV A, B
+		OUT 03H
+		POP PSW
+		RET
+
+;--------------------------------
+;Rutina 7 segmentos
+;--------------------------------
+cnvrt7s: 	PUSH H	; guarda en la pila cualquier valor que tenga HL
+		LXI H, cod7sg; graba la dirección de cod7sg en HL
+		ADD L
+		MOV L,A
+		MOV B, M	; mueve lo que hay en M a B, M tiene la direccion de HL
+		POP H
+		RET
+
+;--------------------------------
+;Rutina que atiende a TRAP
+;--------------------------------
+.ORG 0024H
+		; aqui va la rutina
+		RET
+
+;--------------------------------
+;Rutina que atiende a RST 7.5
+;--------------------------------
+.ORG 003CH
+		CALL contar; aqui va la rutina
+		RET
+
+;--------------------------------
+;Rutina que atiende a RST 6.5
+;--------------------------------
+.ORG 0034H
+		;CALL mostrar; aqui va la rutina
+		RET
+
+;--------------------------------
+;Rutina que atiende a RST 5.5
+;--------------------------------
+.ORG 002CH
+		CALL mostrar; aqui va la rutina
+		RET

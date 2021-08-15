@@ -1,0 +1,76 @@
+.data 1000h
+estado:	DB 09h
+indice:	DB 00h
+ciclo:	DB 01h, 02h, 04h, 40h, 20h, 10h
+posicion:	DB 01h
+
+;-----------------------------------------------------------------------
+; Programa Principal
+;-----------------------------------------------------------------------
+.org 0100h
+		MVI A, 09h
+		SIM
+inicio:	EI
+		JMP inicio
+		HLT
+
+mover:	PUSH H
+		PUSH PSW
+		LXI H,ciclo
+		LDA indice
+		INR A
+		CPI 06h
+		JNZ salto8
+		MVI A,00h
+salto8:	STA indice
+		ADD L
+		MOV L,A
+		MOV A,M
+		OUT 00h
+		POP PSW
+		POP H
+		RET
+
+disparar:
+		PUSH PSW
+		MVI A, 0Ah
+		SIM
+		POP PSW
+		RET
+
+animar:	
+		PUSH PSW
+		LDA posicion
+		MVI D, 08h
+		CALL OutPort
+		INR A
+		CPI 08h
+		JNZ salto9
+		MVI A, 09h
+		SIM
+		MVI A,01h
+		CALL ClearPort
+salto9:	STA posicion
+		POP PSW
+		RET
+
+; REST 7.5 asociada a tiempo cada 1 seg
+;---------------------------------------------------------------------
+.org 003Ch	
+		CALL mover
+		RET
+
+;---------------------------------------------------------------------
+; REST 6.5 asociada tambien a 
+;---------------------------------------------------------------------
+.org 0034h
+		CALL disparar
+		RET
+
+;---------------------------------------------------------------------
+; REST 5.5 asociada a teclado
+;---------------------------------------------------------------------
+.org 002Ch
+		CALL animar
+		RET
+

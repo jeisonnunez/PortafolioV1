@@ -1,0 +1,266 @@
+;---------------------------------------------------------------------
+; Programa de Movimiento de mouse
+; Autor: Gustavo Jimenez
+; Fecha: 11/11/2015
+; Universidad Alejandro de Humboldt
+; 
+; puerto 1: Coordenada X 1 izquierda 2 derecha 0 no se mueve
+; puerto 2: Coordenada y 1 arriba 2 abajo 0 no se mueve
+; rst 5.5 asocuada a teclado simulando cada vez que se mueve el mouse puerto 0
+;---------------------------------------------------------------------
+
+
+;----------------------------------------
+; Definicion de datos
+;----------------------------------------
+.data 1000h
+mouse: db 00h,00h,70h,00h
+	 db 00h,07h,71h,00h
+	 db 00h,77h,71h,00h
+	 db 07h,77h,71h,00h
+	 db 01h,77h,71h,00h
+	 db 00h,77h,71h,00h
+	 db 07h,71h,00h,00h
+	 db 01h,71h,00h,00h
+
+x1:	db 28h
+y1:	db 18h
+
+.data A000h
+video:
+
+
+;----------------------------------
+; Inicio programa principal
+;----------------------------------
+.org  0100h
+		CALL dibujar
+inicio:	EI
+		JMP inicio
+		HLT
+
+;----------------------------------------	
+; Interrupcion RST 5.5 asociada a teclado
+;----------------------------------------
+.org 002Ch
+		CALL borrar
+		LDA x1
+		MOV B,A		; se salva valor de coordenada actual en B
+		IN 01h		; coordenada x
+		CPI 01h		;  izq 1 derecha
+		JZ izquierda
+		CPI 02h	
+		JZ derecha
+		MOV A,B
+		JMP salto1
+
+derecha:	MOV A,B		; se recupera la coordenada
+		INR A			; se mueve a la derecha
+		CPI 4Dh		; limite de la derecha
+		JNZ salto1		; ok por derecha
+		MVI A,4Ch
+		JMP salto1
+
+izquierda:	MOV A,B
+		DCR A
+		CPI FFh
+		JNZ salto1		; ok por izquierda
+		MVI A,00h
+salto1:	STA x1
+
+		LDA y1
+		MOV B,A		; se guarda la coordenada y en B
+		IN 02h		; se lee el desplzamiento
+		CPI 01h
+		JZ arriba
+		CPI 02h
+		JZ abajo
+		MOV A,B
+		JMP salto2
+
+abajo:	MOV A,B
+		INR A
+		CPI 5Ch	; limite de la abajo
+		JNZ salto2	; ok por abajo
+		MVI A,5Bh
+		JMP salto2
+
+arriba:	MOV A,B
+		DCR A
+		CPI FFh
+		JNZ salto2	; ok por arriba
+		MVI A,00h
+salto2:	STA y1
+		CALL dibujar
+		RET	
+
+;------------------------------------------
+; rutina para borrar el cursor actual
+;------------------------------------------
+borrar:	LXI H,video
+		LDA y1
+		MOV E,A
+		MVI D,00h
+		MVI C,50h
+multi:	DAD D
+		DCR C
+		JNZ multi
+		LDA x1
+		MOV E,A
+		DAD D
+		MVI E,4Dh
+		MVI A,00h
+		MVI C,08h
+repetir:	MOV M,A
+		INX H
+		MOV M,A
+		INX H
+		MOV M,A
+		INX H
+		MOV M,A
+		DAD D
+		DCR C
+		JNZ repetir
+		RET
+		
+			
+		
+;------------------------------------------
+; rutina para dibujar el mouse
+;------------------------------------------
+dibujar:
+		LXI H,video
+		LDA y1
+		MOV E,A
+		MVI D,00h
+		MVI C,50h
+multi2:	DAD D
+		DCR C
+		JNZ multi2
+		LDA x1
+		MOV E,A
+		DAD D
+		PUSH H
+		LXI H,mouse
+		MVI E,08h
+L1:   	MOV A,M ; primer
+		INX H
+		XTHL
+		MOV M,A
+		INX H
+		XTHL 
+		MOV A,M
+		INX H
+		XTHL
+		MOV M,A
+		INX H
+		XTHL
+		MOV A,M
+		INX H
+		XTHL
+		MOV M,A
+		INX H
+		XTHL
+		MOV A,M
+		INX H
+		XTHL
+		MOV M,A
+		MVI B,0
+		MVI C,4Dh 
+		DAD B
+		XTHL
+		DCR E
+		JNZ L1
+		POP H
+		RET
+
+
+
+
+
+.data A000h
+video:
+
+.data 1000h
+color:	DB 77h
+
+.org 100h
+		MVI D,1h	; el punto medio de pantalla 160x100
+		MVI E,15h
+		MVI B, 2h
+		MVI C, 15
+lazo1:	CALL Horizontal
+		INR E
+		INR B
+		INR C
+		MOV A,E
+		CPI 25h
+		JNZ lazo1
+		HLT
+
+;----------------------------------------
+; Rutina que dibuja una linea
+; punto inicial DE final BC
+;-------------------------------------
+Horizontal:	PUSH PSW
+		PUSH B
+		PUSH D
+cicloH:	CALL punto
+		INR D
+		MOV A,D
+		CMP B
+		JNZ cicloH
+		POP D
+		POP B	
+		POP PSW
+		RET
+
+;----------------------------------------
+; Rutina que dibuja una linea Vertical
+; punto inicial DE final BC
+;-------------------------------------
+Vertical:	PUSH PSW
+		PUSH B
+		PUSH D
+cicloV:	CALL punto
+		INR E
+		MOV A,E
+		CMP C
+		JNZ cicloV
+		POP D
+		POP B	
+		POP PSW
+		RET
+
+	
+
+	
+
+;----------------------------------------
+; Rutina que imprime un punto en la coordenada D=X E=Y 
+;----------------------------------------
+punto:	PUSH PSW
+		PUSH B
+		PUSH D
+		LXI H,video
+		MVI B,0
+		MVI C,50h
+		DCR E
+continua:	MOV A,E
+		CPI 0
+		JZ termina
+		DCR E
+		DAD B
+		JMP continua
+termina:	DCR D
+		MOV C,D
+		DAD B
+		XCHG
+		LXI H,color
+		MOV A,M
+		XCHG
+		MOV M,A
+		POP D
+		POP B
+		POP PSW
+		RET		

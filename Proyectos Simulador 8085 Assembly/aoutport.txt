@@ -1,0 +1,156 @@
+;--------------------------------------------------------------------------------
+; Programa: Prueba OutPort
+; Autor: Gustavo Jimenez
+; Fecha: 04-10-2017
+;-------------------------------------------------------------------------------
+
+;-------------------------------------------------------------------------------
+; Variables y Datos
+;-------------------------------------------------------------------------------
+.data 1000h
+
+
+
+;-------------------------------------------------------------------------------
+; Principal
+;-------------------------------------------------------------------------------
+.org 0100h
+inicio:		EI	; habilita interrupciones
+		JMP inicio
+
+
+;-----------------------------------------
+; rutinas
+;
+
+rutinaTrap:
+		INR B
+		MOV A.B
+		OUT 01h	
+		RET
+
+
+rutina75:
+		INR C
+		MOV A.C
+		OUT 02h
+		RET
+
+rutina65:	
+		INR D
+		MOV A,D
+		OUT 03h
+		RET
+
+rutina55:
+		INR E
+		MOV A,E
+		OUT 04	
+		RET
+
+
+;---------------------------------------
+; rutinas de interrocoimnes
+;---------------------------------------
+.org 0024h
+inTrap:		
+		CALL rutinaTrap
+		RET
+
+.org 003Ch
+int/5:		CALL rutina75
+		RET
+
+
+.org 0034h
+int65:		CALL rutina65
+		RET
+
+.org 002Ch
+int55:		CALL rutina55
+		RET
+		
+
+
+;-------------------------------------------------------------------------------
+; Rutina: OutPort
+; Descripcion: Envio de dato a puerto variables
+; Parametros: D Dato, A numero de puerto
+; Dato D no se pierde, A es modificado
+;-------------------------------------------------------------------------------
+OutPort:		PUSH D		; salva dato en Pila
+			CPI 00h		; compara con puerto 0
+			JNZ p1		; verifica sino siguiente puerto
+			MOV A,D		; si es este puerto mueve dato a A
+			OUT 00h		; envia dato a este puerto
+			JMP saltofin	; salta al final de rutina
+
+p1:			CPI 01h		; compara con puerto 1
+			JNZ p2		; verifica sino siguiente puerto
+			MOV A,D		; si es este puerto mueve dato a A
+			OUT 01h		; envia dato a este puerto
+			JMP saltofin	; salta al final de rutina
+
+p2:			CPI 02		; compara con puerto 0
+			JNZ p3		; verifica sino siguiente puerto
+			MOV A,D		; si es este puerto mueve dato a A
+			OUT 02h		; envia dato a este puerto
+			JMP saltofin	; salta al final de rutina
+
+p3:			CPI 03		; compara con puerto 0
+			JNZ p4		; verifica sino siguiente puerto
+			MOV A,D		; si es este puerto mueve dato a A
+			OUT 03h		; envia dato a este puerto
+			JMP saltofin	; salta al final de rutina
+
+p4:			CPI 04		; compara con puerto 0
+			JNZ p5		; verifica sino siguiente puerto
+			MOV A,D		; si es este puerto mueve dato a A
+			OUT 04h		; envia dato a este puerto
+			JMP saltofin	; salta al final de rutina
+
+p5:			CPI 05		; compara con puerto 0
+			JNZ p6		; verifica sino siguiente puerto
+			MOV A,D		; si es este puerto mueve dato a A
+			OUT 05h		; envia dato a este puerto
+			JMP saltofin	; salta al final de rutina
+
+p6:			CPI 06		; compara con puerto 0
+			JNZ p7		; verifica sino siguiente puerto
+			MOV A,D		; si es este puerto mueve dato a A
+			OUT 06h		; envia dato a este puerto
+			JMP saltofin	; salta al final de rutina
+
+p7:			CPI 07		; compara con puerto 0
+			JNZ saltofin	; no hay mas puertos
+			MOV A,D		; si es este puerto mueve dato a A
+			OUT 07h		; envia dato a este puerto
+	
+saltofin:		POP D			; recuperamos dato de pila
+			RET			; retorno de rutina
+;------------------------------------------------------------------------------------
+
+
+;----------------------------------------------------------------
+; DisplayPort
+; Muestra el area de Memoria apuntada por HL en puertos de Lds
+; Entrada HL, direccion de memoria
+
+DisplayPort:	PUSH H		; salva direccion inicial de memoria
+			PUSH D		; protege registros D y E
+			PUSH PSW		; protege registro A y Flags
+			MVI A,00H		; inicializa puerto
+siguiente:		MOV D,M		; movemos dato a D
+			CALL OutPort	; llamamos a rutina A puerto D Dato, los valores no se pierden
+			INX H			; siguiente direccion de dato 
+			INR A			; siguiente puerto
+			CPI 08H		; verificamos is llegamos a puerto 08
+			JNZ siguiente	; si no imprimimos en dato en siguiente puerto
+			POP PSW		; se imprimeron todos los puertos
+			POP D			; recupermos el valor que tuviese D y E
+			POP H			; conservamos direccion de Memoria
+			RET			; regresamos de rutina
+			
+			
+
+
